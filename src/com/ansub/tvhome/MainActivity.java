@@ -77,6 +77,12 @@ public class MainActivity extends Activity {
     private static final String[] EDIT_ITEMS_SYSTEM = {"Move", "Replace", "Remove from home", "App info"};
     private static final int PER_ROW = 6, MAX_INPUTS = 4;
 
+    // "TV Aberta": the first tile of the top row. It opens Live TV on the antenna (the TV's tuner
+    // input), even if the last thing watched was an HDMI input. It is not one of the apps, so it can't
+    // be moved or removed. `lead` is how many tiles come before the apps in the top row (1 when shown).
+    private static final String TV_ABERTA = "TV Aberta";
+    private int lead;
+
     // Settings shortcuts: name, label, icon. Tile keys are QUICK + name.
     private static final String QUICK = "quick:";
     private static final String[] QUICK_NAMES = {"bluetooth", "sound", "picture"};
@@ -327,15 +333,21 @@ public class MainActivity extends Activity {
         tileH = h;
 
         List<String> apps = appList(pm);
+        final String tuner = tunerInputId();
+        lead = tuner != null ? 1 : 0;
         // Apps fill rows of six. With more rows the grid starts higher, so up to two rows of apps and
         // the bottom row still fit on screen; past that the page scrolls.
         int launchable = 0;
         for (String pkg : apps) if (launchIntent(pm, pkg) != null) launchable++;
-        int rows = Math.max(1, (launchable + PER_ROW - 1) / PER_ROW);
+        int rows = Math.max(1, (launchable + lead + PER_ROW - 1) / PER_ROW);
         gridTop = Math.max(px(GRID_MIN_TOP), px(ROW1_TOP) - (rows - 1) * px(ROW_STEP));
         int bottomTop = gridTop + rows * px(ROW_STEP);
         ((FrameLayout.LayoutParams) moveHint.getLayoutParams()).topMargin = gridTop - px(64);
         root.setMinimumHeight(bottomTop + h + px(MARGIN));
+
+        // TV Aberta goes first: the tile key is the tuner's input id, so open() sends it to openInput().
+        if (tuner != null)
+            addTile(root, tuner, TV_ABERTA, null, LineIcon.TV, null, gridX(-1), gridY(-1), w, h);
 
         for (String pkg : apps) {
             Intent li = launchIntent(pm, pkg);
@@ -538,8 +550,10 @@ public class MainActivity extends Activity {
 
     // Live TV apps an HDMI tile can open, in order. Droidlogic (Amlogic) TVs ship Live TV under their
     // own package, with TvActivity as its entry point.
+    // The last one is Xiaomi's Live TV on Mediatek TVs (Mi TV): it is only used when the ones before are missing.
     private static final String[][] LIVE_TV = {{"com.android.tv", "com.android.tv.MainActivity"},
-            {"com.droidlogic.android.tv", "com.android.tv.TvActivity"}};
+            {"com.droidlogic.android.tv", "com.android.tv.TvActivity"},
+            {"com.mediatek.wwtv.tvcenter", "com.mitv.livetv.nav.TurnkeyUiMainActivity"}};
     private static final String INPUT_PLAYER = "com.google.android.tv.inputplayer";
 
     // Opens an HDMI input: the stock Live TV app first, then Droidlogic's, then whatever the TV picks.
@@ -874,11 +888,11 @@ public class MainActivity extends Activity {
 
     // Where app number i sits in the grid.
     private int gridX(int i) {
-        return px(MARGIN) + (i % PER_ROW) * (tileW + px(GAP));
+        return px(MARGIN) + ((i + lead) % PER_ROW) * (tileW + px(GAP));
     }
 
     private int gridY(int i) {
-        return gridTop + (i / PER_ROW) * px(ROW_STEP);
+        return gridTop + ((i + lead) / PER_ROW) * px(ROW_STEP);
     }
 
     private View tile(String key) {
@@ -949,6 +963,19 @@ public class MainActivity extends Activity {
         }
         Collections.sort(out, (a, b) -> a.getId().compareTo(b.getId()));
         return out.size() > MAX_INPUTS ? out.subList(0, MAX_INPUTS) : out;
+    }
+
+    // The TV's antenna input (tuner), or null if it has none. When there are several tuner inputs,
+    // the first by id is used (on this kind of TV that is the antenna, like ".../TunerInputService/HW0").
+    private String tunerInputId() {
+        TvInputManager tim = (TvInputManager) getSystemService(Context.TV_INPUT_SERVICE);
+        if (tim == null) return null;
+        String best = null;
+        for (TvInputInfo in : tim.getTvInputList()) {
+            if (in.getType() != TvInputInfo.TYPE_TUNER || in.getParentId() != null) continue;
+            if (best == null || in.getId().compareTo(best) < 0) best = in.getId();
+        }
+        return best;
     }
 
     // The name set in Settings > Inputs (like "Bedroom"), else the TV's own name (like "HDMI 1").

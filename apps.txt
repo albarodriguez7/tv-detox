@@ -1,9 +1,15 @@
 # The apps on the top row of your home screen, in order. One package name per line.
 # Apps that aren't installed are skipped.
 # Not sure of a package name? Ask Claude: "What's the package name of <app> on my TV?"
+# (TV Aberta is added by the home screen itself, as the first tile, so it is not listed here.)
 com.google.android.youtube.tv
 com.netflix.ninja
 com.amazon.amazonvideo.livingroom
 com.disney.disneyplus
-com.hulu.livingroomplus
 com.wbd.stream
+com.movistarplus.androidtv
+com.dazn
+com.rtve.androidtv
+tv.accedo.mitele_xdk
+tv.twitch.android.app
+com.spotify.tv.android

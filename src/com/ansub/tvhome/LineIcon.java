@@ -15,6 +15,9 @@ final class LineIcon extends Drawable {
     static final int[] PLAY = {0, 60, 45, 1, 60, 195, 1, 190, 120, 2};
     static final int[] HDMI = {0, 30, 90, 1, 210, 90, 1, 210, 130, 1, 185, 160, 1, 55, 160, 1, 30, 130, 2,
             0, 80, 120, 1, 160, 120};
+    // A small TV with two antenna lines on top (used by the "TV Aberta" tile).
+    static final int[] TV = {0, 30, 80, 1, 210, 80, 1, 210, 185, 1, 30, 185, 2, 0, 100, 30, 1, 120, 80,
+            0, 140, 30, 1, 120, 80};
     static final int[] SETTINGS = {0, 40, 70, 1, 140, 70, 0, 180, 70, 1, 200, 70, 0, 40, 170, 1, 60, 170,
             0, 100, 170, 1, 200, 170, 3, 160, 70, 20, 3, 80, 170, 20};
     static final int[] PLUS = {0, 120, 50, 1, 120, 190, 0, 50, 120, 1, 190, 120};
