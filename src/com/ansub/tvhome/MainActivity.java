@@ -291,12 +291,12 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() { /* home screen: nothing to go back to */ }
 
-    // Static warm gradient, drawn once by the window: no extra view, no animation.
+    // Static turquoise-blue gradient, drawn once by the window: no extra view, no animation.
     private Drawable background() {
         GradientDrawable base = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[] {0xFF15100F, 0xFF0A0809, 0xFF050405});
-        GradientDrawable warm = radial(0x36FF8048, 0.08f, -0.12f, px(1250));
-        GradientDrawable plum = radial(0x2EAA3C8C, 1.0f, 1.1f, px(1000));
+                new int[] {0xFF0F2428, 0xFF0B1A1D, 0xFF071214});
+        GradientDrawable warm = radial(0x6026C4B8, 0.08f, -0.12f, px(1500));
+        GradientDrawable plum = radial(0x522E86C0, 1.0f, 1.1f, px(1200));
         for (GradientDrawable g : new GradientDrawable[] {base, warm, plum}) g.setDither(true);
         return new LayerDrawable(new Drawable[] {base, warm, plum});
     }
@@ -410,7 +410,7 @@ public class MainActivity extends Activity {
         final GradientDrawable bg = new GradientDrawable();
         bg.setCornerRadius(px(RADIUS));
         if (banner != null) {
-            bg.setColor(0xFF1E1A1C);
+            bg.setColor(0xFF1C2D30);
             ImageView iv = new ImageView(this);
             iv.setImageDrawable(fit(banner, w, h));
             card.addView(iv, new FrameLayout.LayoutParams(-1, -1));
@@ -751,7 +751,7 @@ public class MainActivity extends Activity {
 
         d.setContentView(box);
         Window w = d.getWindow();
-        w.setBackgroundDrawable(new ColorDrawable(0xF7161113));
+        w.setBackgroundDrawable(new ColorDrawable(0xF70F1E21));
         w.setLayout(px(640), -1);
         w.setGravity(Gravity.END);
         w.setDimAmount(0.5f);
@@ -768,7 +768,7 @@ public class MainActivity extends Activity {
         box.setPadding(pad, pad, pad, pad);
         GradientDrawable bg = new GradientDrawable();
         bg.setCornerRadius(px(RADIUS));
-        bg.setColor(0xFF231D1F);
+        bg.setColor(0xFF203235);
         bg.setStroke(Math.max(1, px(2)), 0x17FFFFFF);
         box.setBackground(bg);
         float widest = 0; // some languages need more room than the tile is wide
